@@ -20,7 +20,7 @@ Para construir la imagen correr el siguiente comando
 
 Para ejecutar el contenedor correr el siguiente comando cambiando "Contraseña_provista" por la contraseña enviada por correo.
 
-` docker run -d -p 8080:8080 -e PASSWORD="Contraseña_provista" --name airflow guinea-challenge `
+` docker run -d -p 8080:8080 -e password="Contraseña_provista" --name airflow guinea-challenge `
 
 
 Una vez esté ejecutado. Se puede acceder mediante 

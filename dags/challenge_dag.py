@@ -70,7 +70,7 @@ def process_file(**kwargs):
     # Transformación (para ejemplos del challenge). Cambiar UTC a Perú (Hora y Fecha).
     df = df.withColumn("fecha_peru",
         from_utc_timestamp(
-            to_timestamp(concat(col("fecha_utc"), lit(" "), col("hora_utc")), "yyyy-MM-dd HH:mm:ss"),
+            to_timestamp(concat(col("fecha_utc"), lit(" "), col("hora_utc")), "yyyy-MM-dd HH:mm:ss[.SSS]"),
             "America/Lima"
             )
     ).drop("fecha_utc", "hora_utc")

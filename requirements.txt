@@ -30,7 +30,7 @@ typing_extensions==4.12.2
 tzdata==2025.1
 urllib3==2.3.0
 folium
-pyplot
+matplotlib
 papermill
 
 astro-run-dag # This package is needed for the astro run command. It will be removed before a deploy
