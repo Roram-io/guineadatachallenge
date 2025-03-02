@@ -13,11 +13,12 @@ Reto de flujo ETL para Guinea Mobile.
 
 Para construir la imagen correr el siguiente comando
 
-`docker build -t guinea-challenge-image . `
+` docker build --build-arg AIRFLOW_PIP_ADDITIONAL_REQUIREMENTS=requirements.txt -t guinea-challenge . `
 
 Para ejecutar el contenedor correr el siguiente comando cambiando "Contraseña_provista" por la contraseña enviada por correo.
 
-` docker run -p 8080:8080 -e password="CONTRASEÑA_PROVISTA" mi-proyecto-airflow-spark `
+` docker run -d -p 8080:8080 -e PASSWORD="Contraseña_provista" --name airflow guinea-challenge `
+
 
 Una vez esté ejecutado. Se puede acceder mediante 
 
@@ -38,13 +39,15 @@ Los datos son ingeridos, limpiados, procesados y guardados en una base de datos 
 Para resolver este problema se utilizan las siguientes tecnologías:
 
 - Apache Airflow
-> La herramienta de orquestación de mi preferencia, en este caso con el proveedor de línea de comandos CLI Astronomer.
+> La herramienta de orquestación de mi preferencia, en este caso gestionado a través de Docker.
 
 - Apache Spark
 > Corrido de manera local, en un solo nodo, para efectos de prueba de datos.
 
 - Docker 
-> Para la creación de contenedores. Se elige la Imagen bitnami/spark:3.4.1 Pues incluye Java JDK y Apache Spark
+> Para la creación de contenedores. Se elige la Imagen apache/airflow:2.7.1-python3.11.
+> NOTA: Normalmente Spark necesitaría JDK y la instalación de Spark, pero al correr de forma
+> local, no es necesario realizar pasos adicionales a la librería PySpark.
 
 Las siguientes librerías son utilizadas (Presentes en requirements.txt)
 

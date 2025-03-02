@@ -3,7 +3,7 @@ from pyspark.sql import SparkSession
 from pyspark.sql.types import StructType, StructField, StringType, IntegerType, FloatType
 from pyspark.sql.functions import col, concat, lit, to_timestamp, from_utc_timestamp
 from airflow import DAG
-from airflow.providers.google.cloud.sensors.gcs import GoogleCloudStorageObjectSensor
+from airflow.providers.google.cloud.sensors.gcs import GCSObjectExistenceSensor
 from airflow.operators.python import PythonOperator
 from google.cloud import storage
 from sqlalchemy import create_engine
@@ -93,7 +93,7 @@ def execute_notebook():
     return
 
 with DAG(
-    dag_id="ETL de Ejemplo",
+    dag_id="guinea_challenge",
     start_date=datetime(2024, 1, 1),
     schedule="0 9 * * *",
     catchup=False,
@@ -107,7 +107,7 @@ with DAG(
         "database": "guinea-challenge",
     }
 
-    sensor_gcp = GoogleCloudStorageObjectSensor(
+    sensor_gcp = GCSObjectExistenceSensor(
         task_id="sensor_gcp",
         bucket="bucket-guinea",
         object="datos.csv",

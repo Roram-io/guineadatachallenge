@@ -1,27 +1,17 @@
-# Usar una imagen base con Java (requerido para Spark) y Python
-FROM bitnami/spark:3.4.1
+# Usar la imagen oficial de Apache Airflow
+FROM apache/airflow:2.7.1-python3.11
 
 USER root
-WORKDIR /app
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+# Copiar la carpeta "dags" y "resources" al directorio de Airflow
+COPY dags /opt/airflow/dags
+COPY requirements.txt /requirements.txt
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    curl \
-    git \
-    python3 \
-    python3-pip \
-    libpq-dev
+# Instalar dependencias adicionales (si es necesario)
+USER airflow
+RUN pip install --no-cache-dir notebook  # Instalar Jupyter Notebook si necesitas usarlo
 
-# Instalar Astro CLI
-RUN pip3 install astro-cli
+RUN pip install --no-cache-dir -r /requirements.txt
 
-# Copiar el archivo requirements.txt e instalar las dependencias de Python
-COPY requirements.txt .
-RUN pip3 install --no-cache-dir -r requirements.txt
-
-# Copiar todo el contenido del directorio actual al contenedor
-COPY . .
-
-EXPOSE 8080
-
-# Comando por defecto para iniciar el servidor de desarrollo de Astro
-CMD ["astro", "dev", "start"]
+ENTRYPOINT ["/entrypoint.sh"]
