@@ -10,10 +10,13 @@ Reto de flujo ETL para Guinea Mobile.
 - [Explicación de la Solución](#Explicación-De-La-Solución)
 
 ## Instalación
+- IMPORTANTE
+> Es necesario tener el archivo clave_super_secreta.json enviada al correo y copiarla al directorio raíz.
 
 Para construir la imagen correr el siguiente comando
 
-` docker build --build-arg AIRFLOW_PIP_ADDITIONAL_REQUIREMENTS=requirements.txt -t guinea-challenge . `
+# AIRFLOW_PIP_ADDITIONAL_REQUIREMENTS=requirements.txt
+` docker build -t guinea-challenge . ` 
 
 Para ejecutar el contenedor correr el siguiente comando cambiando "Contraseña_provista" por la contraseña enviada por correo.
 
