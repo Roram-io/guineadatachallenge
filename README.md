@@ -71,4 +71,45 @@ Las siguientes librerías son utilizadas (Presentes en requirements.txt)
 
 ## Explicación de la Solución
 
-Pendiente...
+Construimos la imagen utilizando el .json y la contraseña explicados en la primera sección.
+
+![Comando de Build](https://imgur.com/tIUepdi.png)
+![Comando de Run](https://imgur.com/PHdhttt.png)
+
+Luego ingresamos a [Airflow](http://localhost:8080)
+Con las credenciales 
+> admin
+> admin
+
+![Inicio de Airflow](https://imgur.com/oYjspHO.png)
+
+Podemos observar un único DAG, lo activamos. Los resultados son idempotentes, por lo que debería mostrarse el siguiente gráfico.
+
+![DAG del Challenge](https://imgur.com/h3JgIgd.png)
+![Resultado](https://imgur.com/ir1240g.png)
+
+El dag ejecutará un sensor para detectar la subida de los datos en crudo (subidos previamente para efectos del challenge).
+Procederá al procesamiento de los datos.
+
+- Datos crudos (Horario UTC, valores menores a 4 y mayores a 9)
+![Datos Crudos](https://imgur.com/COgGvsN.png)
+
+- Datos procesados utilizando pySpark (Datetime de Peru, valores significantes)
+![Datos Procesados](https://imgur.com/UKmdbdL.png)
+
+- Se suben los datos ya procesados a postgreSQL.
+![Subida PostgreSQL](https://imgur.com/Lza0DfX.png)
+
+- Posteriormente, se ejecutará la siguiente task que procesa un notebook ipynb con un análisis estadístico.
+- Se tiene una plantilla 'template.ipynb'.
+![Plantilla Notebook](https://imgur.com/UUd8TXM.png)
+
+- El task descarga desde la base de datos PostgreSQL (Podría ser en un contexto de que estos datos volvieron a ser 'procesados' por un tercero)
+- Vuelve el dataframe un archivo .csv para que pueda ser enviado como parámetro al notebook.
+- Se ejecuta el notebook.
+- Finalmente, el resultado del notebook procesado es subido al mismo bucket GCP.
+![Notebook Ejecutado](https://imgur.com/g3Batvb.png)
+
+Mira la magia. [Click](https://storage.googleapis.com/bucket-guinea/procesed_data_report.ipynb)
+
+

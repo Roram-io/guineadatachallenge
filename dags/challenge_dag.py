@@ -45,7 +45,7 @@ def download_file(spark, **kwargs):
 
 # Esta función sube el dataframe ya procesado a una base de datos Postgres.
 def upload_to_postgres(spark, df): #Dataframe de spark. Se cambia a un Dataframe de Pandas para subirlo.
-    postgres_url = "jdbc:postgresql://34.176.248.26:5432/guinea-challenge" #CREDENCIALES GCP
+    postgres_url = "jdbc:postgresql://34.176.248.26:5432/postgres" #CREDENCIALES GCP
     postgres_properties = {
         "user": "postgres",
         "password": os.getenv("password"),
@@ -58,7 +58,11 @@ def upload_to_postgres(spark, df): #Dataframe de spark. Se cambia a un Dataframe
 
 # Se descarga los datos de sismos de GCP, se procesan (con Spark) y se guardan en una base de datos Postgres.
 def process_file(**kwargs):
-    spark = SparkSession.builder.appName("CSV to DataFrame").getOrCreate()
+    spark = SparkSession.builder.appName("CSV-to-DataFrame") \
+    .config("spark.jars", "https://jdbc.postgresql.org/download/postgresql-42.2.19.jar") \
+    .config("spark.driver.extraClassPath", "https://jdbc.postgresql.org/download/postgresql-42.2.19.jar") \
+    .config("spark.executor.extraClassPath", "https://jdbc.postgresql.org/download/postgresql-42.2.19.jar") \
+    .getOrCreate()
     df = download_file(spark, **kwargs)
     if (df==None):
         print("Error al descargar el archivo.")
@@ -96,29 +100,31 @@ def execute_notebook(**kwargs):
     db_config = {
     "host": "34.176.248.26",         # Dirección del servidor PostgreSQL
     "port": 5432,                # Puerto de PostgreSQL
-    "database": "guinea-challenge",  # Nombre de la base de datos
+    "database": "postgres",  # Nombre de la base de datos
     "user": "postgres",        # Usuario de PostgreSQL
     "password": os.getenv("password")  # Contraseña de PostgreSQL
     }
     connection_string = f"postgresql+psycopg2://{db_config['user']}:{db_config['password']}@{db_config['host']}:{db_config['port']}/{db_config['database']}"
     engine = create_engine(connection_string)
     sql = "SELECT * FROM TBL_SEISMIC_DATA"
-    try:
-        df = pd.read_sql(sql, engine)
-    except Exception as e:
-        print("Error al leer datos de Postgres: ", e)
-        return
+    conn = engine.raw_connection()
+    df = pd.read_sql(sql, conn)
     print("Dataframe con datos de sismos:")
     print(df)
-    #Convertimos a parquet para ahorrar espacio.
-    df.to_csv("processed_data.csv")
+    conn.close()
+    #Convertimos a .csv para subirlo a s3
+    df.to_csv("processed_data.csv", index=False)
+    print("Ejecutando Notebook")
+    base_dir = os.path.dirname(os.path.abspath(__file__)) # Directorio absoluto para evitar problemas con direcciones relativas.
+    template_path = os.path.join(base_dir, "resources", "template.ipynb")
     pm.execute_notebook(
-        "resources/template.ipynb",
+        template_path,
         "procesed_data_report.ipynb",
-        parameters=dict(data_path="data.csv")
+        parameters=dict(data_path="processed_data.csv")
     )
+    print("Subiendo notebook resultante a GCS")
     upload_to_gcs(kwargs["bucket_name"], "procesed_data_report.ipynb", "procesed_data_report.ipynb")
-
+    print("¡Terminado! :)")
     return
 
 with DAG(

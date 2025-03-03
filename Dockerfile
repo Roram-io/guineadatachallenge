@@ -5,7 +5,7 @@ USER root
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 # Instalar OpenJDK 11 y limpiar caché
-RUN apt-get update && apt-get install -y openjdk-11-jdk && apt-get clean
+RUN apt-get update && apt-get install -y openjdk-11-jdk && apt-get clean 
 
 # Configurar JAVA_HOME
 ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
