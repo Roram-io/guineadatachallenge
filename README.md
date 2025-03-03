@@ -15,7 +15,6 @@ Reto de flujo ETL para Guinea Mobile.
 
 Para construir la imagen correr el siguiente comando
 
-# AIRFLOW_PIP_ADDITIONAL_REQUIREMENTS=requirements.txt
 ` docker build -t guinea-challenge . ` 
 
 Para ejecutar el contenedor correr el siguiente comando cambiando "Contraseña_provista" por la contraseña enviada por correo.
@@ -98,6 +97,7 @@ Procederá al procesamiento de los datos.
 ![Datos Procesados](https://imgur.com/UKmdbdL.png)
 
 - Se suben los datos ya procesados a postgreSQL.
+
 ![Subida PostgreSQL](https://imgur.com/Lza0DfX.png)
 
 - Posteriormente, se ejecutará la siguiente task que procesa un notebook ipynb con un análisis estadístico.
