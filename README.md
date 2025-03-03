@@ -53,6 +53,9 @@ Para resolver este problema se utilizan las siguientes tecnologías:
 
 Las siguientes librerías son utilizadas (Presentes en requirements.txt)
 
+- pylint
+> Fundamental para garantizar la estandarización del código y su orden
+
 - pyspark
 > Interfaz de Spark utilizando python.
 
